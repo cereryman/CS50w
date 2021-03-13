@@ -1,0 +1,31 @@
+{% extends "hms/layout.html" %}
+{% block body %}
+{% if user.is_authenticated %}
+    <div class="jumbotron splash">
+        <div class="container">
+            <div class="col-md-6">
+                <h1 class="splash-txt"><strong>Marvin Monroe Memorial Hospital Management System</strong></h1>
+                <p class="splash-txt"><h1 class="splash-txt"><strong>Welcome {{ user.username }}!</strong></h1></p>
+                <p>
+                    <a class="btn btn-primary btn-lg splash-but" role="button" href="{% url 'addpatient' %}">New Patient</a>
+                    <a class="btn btn-success btn-lg splash-but" role="button" href="{% url 'patientindex' %}">Patient Index</a>
+                    <a class="btn btn-danger btn-lg splash-but" role="button" href="{% url 'admin:index' %}">Admin Menu</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="jumbotron splash">
+        <div class="container">
+            <div class="col-md-6">
+                <h1 class="splash-txt"><strong>Marvin Monroe Memorial Hospital Management System</strong></h1>
+                <p class="splash-txt">Welcome to the patient and staff management system for the Marvin Monroe Memorial Hospital!</p>
+                <p>
+                    <a class="btn btn-danger btn-lg splash-but" role="button" href="{% url 'admin:index' %}">Admin Login</a>
+                    <a class="btn btn-success btn-lg splash-but" role="button" href="{% url 'login' %}">Staff login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

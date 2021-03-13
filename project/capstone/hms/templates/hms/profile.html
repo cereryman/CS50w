@@ -1,0 +1,282 @@
+{% extends "hms/layout.html" %}
+{% load static %}
+{% block body %}
+<br>
+<div class="row justify-content-md-left">
+	<div class="col col-lg-2">
+		<div class="card card-body">
+			<a href="{% url 'editpicture' patient.id %}" class="badge badge-info">Edit/Upload Picture</a>
+			{% if patient.avatar %}
+				<a href="{{ patient.avatar.url }}"><img src="{{ patient.avatar.url }}" class="img-thumbnail"></a>
+			{% endif %}
+			<h5 class="card-title">{{ patient.first_name }} {{ patient.last_name }}</h5>
+			<h6 class="card-subtitle mb-2 text-muted">{{ patient.gender_full }}, {{ patient.age }} years old</h6>
+			<h6 class="card-subtitle mb-2 text-muted"><b>Bed Location:</b> {{ patient.bed_location }}</h6>
+			<hr>
+			<a class="btn btn-outline-info btn-sm btn-block" href="{% url 'editpatient' patient.id %}">Update Patient Information</a>
+			<a class="btn btn-outline-danger btn-sm btn-block" href="{% url 'deletepatient' patient.id %}">Delete Patient</a>
+
+		</div>
+	</div>
+	<div class="col col-lg-2">
+		<div class="card card-body">
+			<h5>Contact Information</h5>
+			<hr>
+			<p><b>Email:</b> <a href="mailto:{{ patient.email }}">{{ patient.email }}</a></p>
+			<p><b>Phone:</b> {{ patient.phone }}</p>
+			<p><b>Address:</b> {{ patient.address }}</p>
+			<hr>
+			<h5>Secondary Contact Information</h5>
+			<hr>
+			<p><b>Name:</b> {{ patient.contact_name }}</p>
+			<p><b>Relationship:</b> {{ patient.contact_relationship }}</p>
+			<p><b>Email:</b> <a href="mailto:{{ patient.contact_email }}">{{ patient.contact_email }}</a></p>
+			<p><b>Phone:</b> {{ patient.contact_phone }}</p>
+		</div>
+	</div>
+	<div class="col col-lg-2">
+		<div class="card card-body">
+			<h5>General Information</h5>
+			<hr>
+			<p><b>Date of Birth:</b> {{ patient.birth_date }}</p>
+			<p><b>Gender:</b> {{ patient.gender_full }}</p>
+			<p><b>Height:</b> {{ patient.height_cm }} cm</p>
+			<p><b>Weight:</b> {{ patient.weight_kg }} kg</p>
+			<p><b>Blood Type:</b> {{ patient.blood_type_full }}</p>
+			<hr>
+			<h5>Insurance Information</h5>
+			<hr>
+			<p><b>Insurance Provider:</b> {{ patient.insurance_policy_provider }}</p>
+			<p><b>Insurance Policy Number:</b> {{ patient.insurance_policy_number }}</p>
+		</div>
+	</div>
+	<div class="col-md-auto">
+		<div class="card card-body">
+			<h5>Hospitalization</h5>
+			<hr>
+			<p>
+				<b>Current Status:</b>
+				{% if status != "Released" %}
+					<br>Hospitalized<br>Since {{ status.timestamp }}
+					<hr>
+					<a href="{% url 'checkinout' patient.id %}" class="btn btn-outline-danger btn-sm">Check-Out</a>
+				{% else %}
+					<br>Released
+					<hr>
+					<a href="{% url 'checkinout' patient.id %}" class="btn btn-outline-info btn-sm">Check-In</a>
+      			{% endif %}
+      		</p>
+      		<p class="card-text">
+      			<small class="text-muted">
+					<hr>
+      				<h5>History</h5>
+					<hr>
+					{% for status in statuses  %}
+						{{ status.status }} on {{ status.timestamp}} <br>
+					{% endfor %}
+        			<br>
+					<nav>
+						<ul class="pagination justify-content-center">
+							{% if statuses.has_previous %}
+								<li class="page-item"><a class="page-link" href="?page_his=1">&laquo; first</a></li>
+								<li class="page-item"><a class="page-link" href="?page_his={{ statuses.previous_page_number }}">previous</a></li>
+        					{% endif %}
+    						<li class="page-item"><a class="page-link">Page {{ statuses.number }} of {{ statuses.paginator.num_pages }}</a></li>
+        					{% if statuses.has_next %}
+            					<li class="page-item"><a class="page-link" href="?page_his={{ statuses.next_page_number }}">next</a></li>
+            					<li class="page-item"><a class="page-link" href="?page_his={{ statuses.paginator.num_pages }}">last &raquo;</a></li>
+        					{% endif %}
+    					</ul>
+					</nav>
+				</small>
+			</p>
+		</div>
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col">
+		<div class="card card-body">
+      		<h2>Log</h2>
+      		<div class="col col-lg-2">
+      			<div class="card card-body border-0">
+					<button type="button" class="btn btn-primary btn-lg" id="add-log">+ Add Log</button>
+					<div id="add-log-form">
+						<form action="{% url 'addlog' patient.id %}" method="post" enctype="multipart/form-data">
+            				{% csrf_token %}
+							{% for field in NewLogForm  %}
+                				<div class="form-group">
+                    				{{ field.label_tag }}
+                    				{{ field }}
+                				</div>
+							{% endfor %}
+            				<p><input type="submit" class="btn btn-primary" value="Save"></p>
+       					</form>
+					</div>
+      			</div>
+      		</div>
+			<div>
+      		{% if logs %}
+        		<table class="table">
+          			<thead>
+            			<tr>
+              				<th scope="col">Date</th>
+              				<th scope="col">Author</th>
+              				<th scope="col">Log</th>
+              				<th scope="col">Action</th>
+            			</tr>
+          			</thead>
+          			<tbody>
+            			{% for log in logs %}
+            				<tr>
+              					<th scope="row" id="date-{{ log.id }}">{{ log.timestamp }}</th>
+              					<td id="author-{{ log.id }}">{{ log.nurse }}</td>
+              					<td id="log-{{ log.id }}">{{ log.note|linebreaks }}</td>
+              					<td id="action-{{ log.id }}">
+              						<a href="{% url 'editlog' log.id %}" class="btn btn-outline-info btn-sm">Edit</a>
+              						<a href="{% url 'deletelog' log.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+              					</td>
+            				</tr>
+            			{% endfor %}
+          			</tbody>
+        		</table>
+				<nav>
+					<ul class="pagination justify-content-center">
+						{% if logs.has_previous %}
+							<li class="page-item"><a class="page-link" href="?page_log=1">&laquo; first</a></li>
+							<li class="page-item"><a class="page-link" href="?page_log={{ logs.previous_page_number }}">previous</a></li>
+        				{% endif %}
+    					<li class="page-item"><a class="page-link">Page {{ logs.number }} of {{ logs.paginator.num_pages }}</a></li>
+        				{% if logs.has_next %}
+            				<li class="page-item"><a class="page-link" href="?page_log={{ logs.next_page_number }}">next</a></li>
+            				<li class="page-item"><a class="page-link" href="?page_log={{ logs.paginator.num_pages }}">last &raquo;</a></li>
+        				{% endif %}
+    				</ul>
+				</nav>
+      		{% else %}
+        		<p>No logs recorded!</p>
+      		{% endif %}
+      		</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+		<div class="card card-body">
+      		<h2>Allergies</h2>
+      		<div class="col col-lg-2">
+      			<div class="card card-body border-0">
+					<button type="button" class="btn btn-primary btn-lg" id="add-allergy">+ Add Allergy</button>
+					<div id="add-allergy-form">
+						<form action="{% url 'addallergy' patient.id %}" method="post" enctype="multipart/form-data">
+            				{% csrf_token %}
+							{% for field in NewAllergyForm  %}
+                				<div class="form-group">
+                    				{{ field.label_tag }}
+                    				{{ field }}
+                				</div>
+							{% endfor %}
+            				<p><input type="submit" class="btn btn-primary" value="Save"></p>
+       					</form>
+					</div>
+      			</div>
+      		</div>
+			<div>
+      		{% if allergies %}
+        		<table class="table">
+          			<thead>
+            			<tr>
+              				<th scope="col">Allergy</th>
+              				<th scope="col">Reaction</th>
+              				<th scope="col">Category</th>
+              				<th scope="col">Severity</th>
+              				<th scope="col">Action</th>
+            			</tr>
+          			</thead>
+          			<tbody>
+            			{% for allergy in allergies %}
+            				<tr>
+              					<th scope="row" id="allergy-{{ allergy.id }}">{{ allergy.allergy }}</th>
+              					<td id="reaction-{{ allergy.id }}">{{ allergy.reaction|linebreaks }}</td>
+              					<td id="catgeory-{{ allergy.id }}">{{ allergy.display_category }}</td>
+              					<td id="severity-{{ allergy.id }}">{{ allergy.display_severity }}</td>
+              					<td id="action-{{ allergy.id }}">
+              						<a href="{% url 'editallergy' allergy.id %}" class="btn btn-outline-info btn-sm">Edit</a>
+              						<a href="{% url 'deleteallergy' allergy.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+              					</td>
+            				</tr>
+            			{% endfor %}
+          			</tbody>
+        		</table>
+				<nav>
+					<ul class="pagination justify-content-center">
+						{% if allergies.has_previous %}
+							<li class="page-item"><a class="page-link" href="?page_all=1">&laquo; first</a></li>
+							<li class="page-item"><a class="page-link" href="?page_all={{ allergies.previous_page_number }}">previous</a></li>
+        				{% endif %}
+    					<li class="page-item"><a class="page-link">Page {{ allergies.number }} of {{ allergies.paginator.num_pages }}</a></li>
+        				{% if allergies.has_next %}
+            				<li class="page-item"><a class="page-link" href="?page_all={{ allergies.next_page_number }}">next</a></li>
+            				<li class="page-item"><a class="page-link" href="?page_all={{ allergies.paginator.num_pages }}">last &raquo;</a></li>
+        				{% endif %}
+    				</ul>
+				</nav>
+      		{% else %}
+        		<p>No allergies recorded!</p>
+      		{% endif %}
+      		</div>
+		</div>
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h2>Vitals</h2>
+			<div class="btn-group">
+				<button class="btn btn-outline-primary" id="SYS_BP">Systolic Blood Pressure</button>
+				<button class="btn btn-outline-primary" id="DIA_BP">Diastolic Blood Pressure</button>
+    			<button class="btn btn-outline-primary" id="RR">Respiratory Rate</button>
+    			<button class="btn btn-outline-primary" id="BT">Body Temperature</button>
+    			<button class="btn btn-outline-primary" id="HR">Heart Rate</button>
+    		</div>
+			<div class="col col-lg-2">
+				<div class="card card-body border-0">
+					<button type="button" class="btn btn-primary btn-lg" id="add-vital">+ Add Value</button>
+					<br>
+        			<form id="add-form">
+            			<div class="form-group">Value: <input id="add-value"></div>
+            			<input type="submit" class="btn btn-primary"/>
+    				</form>
+				</div>
+			</div>
+			<!--Div that will hold the chart-->
+			<div class="embed-responsive embed-responsive-16by9">
+				<div id="curve_chart" class="embed-responsive-item"></div>
+   			</div>
+   			<div class="d-flex justify-content-center"><img src="{% static 'gol_footer.png' %}"></img></div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block script %}
+<!--Section for the VITALS and Charts-->
+	<!--Load the Google AJAX API-->
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<!--Load the Google Charts Loader -->
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<!-- Load Google JSAPI -->
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<!-- GLobal parameters for exrernal JS scripts -->
+	<script>
+		var PATIENT = {{ patient.id }};
+		var VITALS = ['SYS_BP','DIA_BP','RR','BT','HR'];
+		var VITAL;
+	</script>
+	<!-- Draw the charts and vitals logic -->
+   	<script type="text/javascript" src="{% static 'vitals.js' %}"></script>
+	<!-- Section for Allergies -->
+    <script type="text/javascript" src="{% static 'allergies.js' %}"></script>
+	<!-- Section for Logs -->
+    <script type="text/javascript" src="{% static 'logs.js' %}"></script>
+{% endblock %}

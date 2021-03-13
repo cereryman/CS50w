@@ -1,0 +1,15 @@
+{% extends "hms/layout.html" %}
+{% load static %}
+{% block body %}
+<div class="card card-body text-center">
+    <h1>Delete {{ title }}: "{{ element_name }}"</h1>
+    <p>Are you sure you want to delete: {{ element_name }}?</p>
+        <form action="{% url view element.id %}" method="post">
+			{% csrf_token %}
+			{% for field in form  %}
+				<li>{{ field.label_tag }} {{ field }}</li>
+			{% endfor %}
+            <p><input type="submit" class="save" value="Confirm"><a href="javascript:history.back();" class="text-danger" id="cancel">Cancel</a></p>
+        </form>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "hms/layout.html" %}
+{% load static %}
+{% block body %}
+<div class="col-md-4 offset-md-4">
+    <div class="card card-body">
+        <h1>Edit {{ title }}: "{{ element_name }}"</h1>
+        <form action="{% url view element.id %}" enctype="multipart/form-data" method="post">
+			{% csrf_token %}
+			{% for field in form  %}
+                <div class="form-group">
+                    <label>{{ field.label_tag }}</label>
+                    <div class="your need">{{ field }} </div>
+                </div>
+			{% endfor %}
+            <p><input type="submit" class="btn btn-primary" value="Save"><a href="javascript:history.back();" class="text-danger" id="cancel">Cancel</a></p>
+        </form>
+    </div>
+</div>
+{% endblock %}

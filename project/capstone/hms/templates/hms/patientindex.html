@@ -1,0 +1,56 @@
+{% extends "hms/layout.html" %}
+{% load static %}
+{% block body %}
+<br>
+<div class="row">
+	<div class="col">
+		<div class="card card-body">
+      		<h2>Patients</h2>
+      		<div class="col col-lg-2">
+      			<div class="card card-body border-0">
+					<a class="btn btn-primary btn-lg splash-but" role="button" href="{% url 'addpatient' %}">New Patient</a>
+      			</div>
+      		</div>
+			<div>
+      		{% if patients %}
+        		<table class="table">
+          			<thead>
+            			<tr>
+              				<th scope="col">ID</th>
+              				<th scope="col">Name</th>
+              				<th scope="col">Bed Location</th>
+            			</tr>
+          			</thead>
+          			<tbody>
+            			{% for patient in patients %}
+            					<tr>
+              						<th scope="row" id="patient-{{ patient.id }}"><a href="{% url 'patient' patient.id %}" class="rowlink">{{ patient.id }}</a></th>
+              						<td id="name-{{ patient.id }}"><a href="{% url 'patient' patient.id %}" class="rowlink">{{ patient.last_name }}, {{ patient.first_name }}</a></td>
+              						<td id="location-{{ patient.id }}">{{ patient.bed_location }}</td>
+            					</tr>
+            				</a>
+            			{% endfor %}
+          			</tbody>
+        		</table>
+				<nav>
+					<ul class="pagination justify-content-center">
+						{% if patients.has_previous %}
+							<li class="page-item"><a class="page-link" href="?page=1">&laquo; first</a></li>
+							<li class="page-item"><a class="page-link" href="?page={{ patients.previous_page_number }}">previous</a></li>
+        				{% endif %}
+    					<li class="page-item"><a class="page-link">Page {{ patients.number }} of {{ patients.paginator.num_pages }}</a></li>
+        				{% if patients.has_next %}
+            				<li class="page-item"><a class="page-link" href="?page={{ patients.next_page_number }}">next</a></li>
+            				<li class="page-item"><a class="page-link" href="?page={{ patients.paginator.num_pages }}">last &raquo;</a></li>
+        				{% endif %}
+    				</ul>
+				</nav>
+      		{% else %}
+        		<p>No patients recorded!</p>
+      		{% endif %}
+      		</div>
+		</div>
+	</div>
+</div>
+<br>
+{% endblock %}
