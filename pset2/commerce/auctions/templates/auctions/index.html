@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+{% load humanize %}
+{% block body %}
+    <div class="container-fluid">
+      <h2>{{ header }}</h2>
+      {% if auctions %}
+        <table class="table ">
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Thumbnail</th>
+              <th scope="col">Description</th>
+              <th scope="col">Current Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for auction in auctions %}
+            <tr>
+              <th scope="row"><a href="{% url 'auction' auction.id %}" alt="{{ auction.title }}">{{ auction.title }}</a></th>
+              <td><a href="{% url 'auction' auction.id %}" alt="{{ auction.title }}"><img src="{{ auction.image_url }}" alt="{{ auction.title }}" class="img-thumbnail" width=200></a></td>
+              <td>{{ auction.description }}</td>
+              <td>${{ auction.highest_bid|floatformat:2|intcomma }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No listings!</p>
+      {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="container-fluid">
+        <form action="{% url 'create' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form  %}
+                <li>{{ field.label_tag }} {{ field }}</li>
+            {% endfor %}
+            <p><input type="submit" class="save" value="Save"></p>
+        </form>
+    </div>
+{% endblock %}

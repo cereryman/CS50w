@@ -1,0 +1,9 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="container-fluid">
+        {% for id, name in categories %}
+            <a href="{% url 'category' id %}" alt="{{ name }}">{{ name }}</a><br>
+        {% endfor %}
+    </div>
+{% endblock %}

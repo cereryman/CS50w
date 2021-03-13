@@ -1,0 +1,69 @@
+{% extends "auctions/layout.html" %}
+{% load humanize %}
+{% block body %}
+    <div class="container-fluid">
+        {% if auction.active %}
+            {% if user_is_owner %}
+                <p class="text-right text-danger">Ready? Click <a href="{% url 'close' auction.id %}" alt="Close">here</a> to close the auction!</p>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <p>
+                    <a href="{% url 'add_rem_watchlist' auction.id %}" alt="auction.title">
+                        {% if in_watchlist %}
+                            Remove from watchlist
+                        {% else %}
+                            Add to watchlist
+                        {% endif %}
+                    </a>
+                </p>
+            {% else %}
+                <p>Login to add item to watchlist.</p>
+            {% endif %}
+        {% else %}
+            <p class="text-right">Auction is closed</p>
+            {% if user_is_winner %}
+                <p>You are the winner</p>
+            {% endif %}
+        {% endif %}
+        <table style="width: 80%;" border=0 cellpadding="20" align="center">
+            <tbody>
+                <tr>
+                    <td>
+                        <p><img src="{{ auction.image_url }}" alt="{{ auction.title }}" width="300"></p>
+                        <h1 class="display-4">{{ auction.title }}</h1>
+                        <p><dd class="col-sm-9">{{ auction.description }}</dd></p>
+                        <p>Posted in category: <a href="{% url 'category' auction.category %}" alt="auction.category">{{ auction.get_category_display }}</a></p>
+                        <p>Posted by {{ auction.creator}}, {{ auction.timestamp }}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="text-center"><b>Current Bid: ${{ auction.highest_bid|floatformat:2|intcomma }}</b><br><small><i>(Starting price: ${{ auction.starting_bid|floatformat:2|intcomma }})</i></small></p>
+        <h3><p class="text-center">Interested?</p></h3>
+        {% if user.is_authenticated %}
+            <form action="{% url 'bid' auction.id  %}" method="post" align='center'>
+                {% csrf_token %}
+                {{ NewBidForm }}
+                <button type="submit" class="btn btn-outline-primary btn-lg" type="button">Place Bid</button>
+            </form>
+        {% else %}
+            <p class="text-center text-danger">Login to place a bid.</p>
+        {% endif %}
+        <hr>
+        <h2><p class="text-center">Comment Section</p></h4>
+        <h4><p class="text-center">Post a comment</p></h4>
+        {% if user.is_authenticated %}
+            <form action="{% url 'add_comment' auction.id  %}" method="post" align="center">
+                {% csrf_token %}
+                <p>{{ NewCommentForm }}</p>
+                <p><input type="submit" class="save" value="Save"></p>
+            </form>
+        {% else %}
+            <p class="text-center text-danger">Login to post a comment.</p>
+        {% endif %}
+        <h4><p class="text-center">Existing Comments</p></h4>
+        {% for comment in comments %}
+            <p class="text-center">{{ comment }}</p>
+        {% endfor %}
+    </div>
+{% endblock %}
