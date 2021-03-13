@@ -1,0 +1,15 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Encyclopedia - Error
+{% endblock %}
+
+{% block body %}
+    <p>{{ text }}</p>
+    <button onclick="goBack()">Go Back</button>
+    <script>
+        function goBack() {
+        window.history.back();
+        }
+    </script>
+{% endblock %}
