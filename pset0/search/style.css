@@ -1,0 +1,154 @@
+* {
+    font-family: arial;
+}
+
+.topnavbar_index {
+    flex: none;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    text-align: right;
+    color: black;
+    font-size: 10pt;
+    font-family: arial;
+    margin-left: auto;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+a {
+    color: black;
+    padding-right: 10px;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    flex: auto;
+    text-align: center;
+    width: 1100px;
+    height: auto;
+    margin: 0 auto;
+}
+
+img {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 200px;
+}
+
+p {
+    text-align: left;
+    font-size: 17pt;
+}
+
+.red {
+    color: red;
+}
+
+hr {
+    width: 100%;
+    margin-left: 0;
+    color: gray;
+}
+
+.block {
+    display: inline-block;
+    width: 800px;
+    font-family: arial;
+    text-align: left;
+    font-size: 12pt;
+}
+
+#logo {
+    width: 280px;
+}
+
+table {
+    text-align: left;
+    width: 100%;
+    border= 0;
+    padding= 0;
+}
+
+input {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+input[type="text"] {
+    width: 500px;
+    height: 40px;
+    border-radius: 20px;
+    outline: none;
+    border-color: gray;
+    border: none;
+    box-shadow: 0 0 1px black;
+    padding-left: 20px;
+}
+
+input[type="text"]:hover {
+    outline: none;
+    border-color: gray;
+    border: none;
+    box-shadow: 0 0 4px gray;
+}
+
+input[type="submit"] {
+    margin-bottom: 60px;
+    border: none;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 10px;
+    font-size: 11pt;
+    font-family: arial;
+}
+
+input[type="submit"]:hover {
+    outline: none;
+    border-color: gray;
+    border: none;
+    box-shadow: 0 0 3px black;
+    cursor: pointer;
+}
+
+.botnavbar {
+    background: lightgray;
+    font-family: arial;
+    font-size: 10pt;
+    color: black;
+    vertical-align: middle;
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+    left: 0px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.botnavbar > a {
+    color: darkgray;
+}
+
+.botnavbar-left {
+    float: left;
+    padding-left: 15px;
+}
+
+.botnavbar-right {
+    float: right;
+    padding-right: 15px;
+}
+
+.buttons {
+    background-color: lightgray;
+    color: black;
+}
+
+#buttons_adv {
+    background-color: blue;
+    color: white;
+}
