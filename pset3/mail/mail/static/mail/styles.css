@@ -1,0 +1,41 @@
+textarea {
+    min-height: 400px;
+}
+
+p {
+    margin: 20px;
+}
+
+.mailitem {
+    padding: 10px;
+    border:1px solid black;
+    margin-bottom: 0px;
+}
+
+.read {
+  background-color: lightgrey;
+}
+
+.unread {
+  background-color: white;
+}
+
+.column {
+  float: left;
+}
+
+.left, .right {
+  width: 25%;
+}
+
+.middle {
+  width: 50%;
+}
+
+.recipient {
+    font-weight: bold;
+}
+
+.date {
+    color: grey;
+}

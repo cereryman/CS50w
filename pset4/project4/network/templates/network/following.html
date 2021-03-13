@@ -1,0 +1,54 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% block body %}
+
+<div class="container-fluid">
+    <h2>Following</h2>
+
+    {% for post in page_obj %}
+        <div class="box">
+            <h5><a href="{% url 'profile' post.user.id %}" alt="View {{ post.user }}'s profile" class="user">{{ post.user|upper }}</a></h5>
+            {% if user.is_authenticated and user.id == post.user.id  %}
+                <div class="edit" id="{{ post.id }}">
+                    <a href="javascript:void(0);">Edit</a>
+                </div>
+                    <div class="edit-form" id="edit-form-{{ post.id }}">
+                        <h3>Edit Post</h3>
+                        <form id="edit-submit-{{ post.id }}">
+                            <textarea class="form-control" id="edit-form-body-{{ post.id }}" placeholder="Body"></textarea>
+                            <input type="submit" class="btn btn-primary" value="Save">
+                        </form>
+                    </div>
+            {% endif %}
+            <p class="post-body" id="post-body-{{ post.id }}">{{ post.body }}</p>
+            <p class="text-secondary date">{{ post.timestamp }}</p>
+            {% if user in post.like.all %}
+                <p class="like" id="{{ post.id }}" style="color:red;"><a href="javascript:void(0);">♥</a></p>
+            {% else %}
+                <p class="like" id="{{ post.id }}" style="color:black;"><a href="javascript:void(0);">♥</a></p>
+            {% endif %}
+            <p class="text-secondary like" id="count-like-{{ post.id }}">{{ post.num_likes }}</p>
+        </div>
+    {% endfor %}
+
+    <nav>
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; first</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+        {% endif %}
+
+        <li class="page-item"><a class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+</div>
+{% endblock %}
+{% block script %}
+    <script src="{% static 'network/posts.js' %}"></script>
+{% endblock %}
